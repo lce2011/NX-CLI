@@ -1,5 +1,5 @@
 [package]
-name = "nx-project-manager"
+name = "nx-cli"
 version = "1.0.0"
 edition = "2024"
 
