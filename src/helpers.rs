@@ -1,11 +1,12 @@
 use std::io::{Error, ErrorKind, Result, Write};
-use std::fs::{File, create_dir};
-use std::env::current_dir;
+use std::fs::{File, create_dir, remove_file};
 use std::path::Path;
+use std::env::current_dir;
 
 use crate::cli::NewOptions;
 use crate::code_templates::{C_CXX_CODE, MAKEFILE_CODE};
-
+use crate::error::{CustomError, CustomErrorKind};
+use crate::handlers::{build_path_from_cwd, build_path_from_two, get_os, download_latest_devkit_release, execute_updater_windows};
 pub fn new(args: &NewOptions) -> Result<()> {
     let project_path: String = build_path_from_cwd(&args.name.to_string());
 
@@ -42,11 +43,29 @@ pub fn new(args: &NewOptions) -> Result<()> {
     }
 }
 
-fn build_path_from_cwd(name: &str) -> String {
-    let cwd = current_dir();
-    return cwd.unwrap().to_string_lossy().to_string() + "/" + name;
-}
+pub fn update() -> core::result::Result<(), Box<dyn std::error::Error>> {
+    let os_binding: String = get_os();
+    let os: &str = &os_binding.as_str();
 
-fn build_path_from_two(first: &str, second: &str) -> String {
-    return first.to_string() + "/" + second;
+    match os {
+        "windows" => {
+            let _ = download_latest_devkit_release();
+
+            let execution_path: String = format!("{}/devkitPro-Update.exe", current_dir().unwrap().to_string_lossy().to_string());
+            let exe_ini_path: String = format!("{}/devkitProUpdate.ini", current_dir().unwrap().to_string_lossy().to_string());
+
+            let _ = execute_updater_windows(&execution_path);
+
+            let _ = remove_file(execution_path);
+            let _ = remove_file(exe_ini_path);
+
+            Ok(())
+        },
+        "unix" => {
+            Ok(())
+        },
+        &_ => {
+            Err(Box::new(CustomError::new(CustomErrorKind::UnsupportedOS, &format!("Unknown or unsuported OS {}!", os).to_string())))
+        }
+    }
 }

@@ -9,7 +9,9 @@ pub struct NXCli {
 #[derive(StructOpt)]
 pub enum NXCommand {
     #[structopt(about="Create a new project", name="new")]
-    New(NewOptions)
+    New(NewOptions),
+    #[structopt(about="Update your enviroment", name="update")]
+    Update
 }
 
 #[derive(StructOpt)]
