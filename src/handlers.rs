@@ -4,10 +4,13 @@ use std::process::Command;
 use std::error::Error;
 use std::io::Result;
 
-use windows::core::PCWSTR;
-use windows::Win32::System::Threading::{WaitForSingleObject, INFINITE};
-use windows::Win32::UI::Shell::{ShellExecuteExW, SEE_MASK_NOCLOSEPROCESS, SHELLEXECUTEINFOW};
-use windows::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL;
+#[cfg(windows)]
+use {
+    windows::core::PCWSTR,
+    windows::Win32::System::Threading::{WaitForSingleObject, INFINITE},
+    windows::Win32::UI::Shell::{ShellExecuteExW, SEE_MASK_NOCLOSEPROCESS, SHELLEXECUTEINFOW},
+    windows::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL
+};
 
 use crate::error::{CustomErrorKind, CustomError};
 
