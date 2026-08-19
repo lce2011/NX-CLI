@@ -5,7 +5,11 @@ use std::error::Error;
 pub enum CustomErrorKind {
     FailedDownload,
     UnsupportedOS,
-    WgetUnavaible
+    WgetUnavaible,
+    WgetDownloadFail,
+    MacOSInstallerFail,
+    UnixScriptRightsFail,
+    UnixInstallScriptFail
 }
 
 #[derive(Debug)]

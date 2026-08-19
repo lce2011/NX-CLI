@@ -1,5 +1,5 @@
 use std::env::current_dir;
-use std::env::consts::OS;
+use std::env::consts::{FAMILY, OS};
 use std::process::Command;
 use std::error::Error;
 use std::io::Result;
@@ -23,19 +23,27 @@ pub fn build_path_from_two(first: &str, second: &str) -> String {
     return first.to_string() + "/" + second;
 }
 
-pub fn get_os() -> String {
-    OS.to_string()
+pub struct System {
+    pub family: String,
+    pub os: String
+}
+
+pub fn get_os() -> System {
+    System {
+        family: FAMILY.to_string(),
+        os: OS.to_string()
+    }
 }
 
 #[cfg(windows)]
 pub fn download_latest_devkit_release_windows() -> core::result::Result<(), Box<dyn Error>> {
     let updater_url: &str = "https://github.com/devkitPro/installer/releases/download/v3.0.3/devkitProUpdater-3.0.3.exe";
 
-    println!("Using devvkitPro Updater from {:?}", updater_url);
+    println!("Using devkitPro Updater from {:?}", updater_url);
 
     let _ = Command::new("wget")
         .args(["-qO", "devkitPro-Update.exe", updater_url])
-        .status()
+        .spawn()
         .expect(Err(CustomError::new(CustomErrorKind::FailedDownload, &format!("Failed to download Updater from {}", updater_url).to_string()))?);
 
     println!("Downloaded Updater from {:?}", updater_url);

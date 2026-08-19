@@ -7,7 +7,7 @@ use std::process::Command;
 use crate::cli::NewOptions;
 use crate::code_templates::{C_CXX_CODE, MAKEFILE_CODE};
 use crate::error::{CustomError, CustomErrorKind};
-use crate::handlers::{build_path_from_cwd, build_path_from_two, get_os};
+use crate::handlers::{build_path_from_cwd, build_path_from_two, get_os, System};
 
 #[cfg(windows)]
 use crate::handlers::{download_latest_devkit_release_windows, execute_updater_windows};
@@ -59,10 +59,13 @@ pub fn update() -> core::result::Result<(), Box<dyn std::error::Error>> {
     }
     println!("Found wget in PATH.");
 
-    let os_binding: String = get_os();
-    let os: &str = &os_binding.as_str();
+    let system_os: System = get_os();
+    let os_family: &str = &system_os.family.as_str();
+    let os: &str = &system_os.os.as_str();
 
-    match os {
+    println!("Detected System: {}-like {}", os_family, os);
+
+    match os_family {
         "windows" => {
             #[cfg(windows)]
             {
@@ -81,10 +84,49 @@ pub fn update() -> core::result::Result<(), Box<dyn std::error::Error>> {
             }
             Ok(())
         },
-        "unix" | "android" => {
+        "unix" => {
             #[cfg(not(windows))]
             {
-                println!("UNIX Test");
+                let unix_download_url: &str = "https://github.com/devkitPro/pacman/releases/download/v6.0.2/devkitpro-pacman-installer.pkg";
+                let debian_download_url: &str = "https://apt.devkitpro.org/install-devkitpro-pacman";
+
+                if os == "debian" {
+                    println!("Using Updater/Installer from {}.", debian_download_url);
+                    let _ = Command::new("wget")
+                        .arg(debian_download_url)
+                        .spawn()
+                        .expect(Err(CustomError::new(CustomErrorKind::WgetDownloadFail, &format!("Something went wrong while downloading {}!", debian_download_url).to_string()))?);
+                } else {
+                    println!("Using Updater/Installer from {}.", unix_download_url);
+                    let _ = Command::new("wget")
+                        .args(["-qO", "devkitPro-Pacman.pkg", unix_download_url])
+                        .spawn()
+                        .expect(Err(CustomError::new(CustomErrorKind::WgetDownloadFail, &format!("Something went wrong while downloading {}!", unix_download_url).to_string()))?);
+                }
+
+                if os == "macos" {
+                    let _ = Command::new("sudo")
+                        .args(["installer", "-pkg", format!("{:?}/devkitPro-Pacman.pkg", current_dir()).as_str(), "-target", "/"])
+                        .spawn()
+                        .expect(Err(CustomError::new(CustomErrorKind::MacOSInstallerFail, "Something went wrong with the MacOS .pkg Installer!"))?);
+                } else if os == "android" {
+                    let _ = Command::new("chmod")
+                        .args(["+x", "./dvkitPro-Pacman"])
+                        .spawn()
+                        .expect(Err(CustomError::new(CustomErrorKind::UnixScriptRightsFail, "Something went wrong with the rights (chmod) for the UNIX Install script!"))?);
+                    let _ = Command::new("./devkitPro-Pacman")
+                        .spawn()
+                        .expect(Err(CustomError::new(CustomErrorKind::UnixInstallScriptFail, "Something went wrong with the UNIX install script!"))?);
+                } else {
+                    let _ = Command::new("chmod")
+                        .args(["+x", "./dvkitPro-Pacman"])
+                        .spawn()
+                        .expect(Err(CustomError::new(CustomErrorKind::UnixScriptRightsFail, "Something went wrong with the rights (chmod) for the UNIX Install script!"))?);
+                    let _ = Command::new("sudo")
+                        .arg("./devkitPro-Pacman")
+                        .spawn()
+                        .expect(Err(CustomError::new(CustomErrorKind::UnixInstallScriptFail, "Something went wrong with the UNIX install script!"))?);
+                }
             }
             Ok(())
         },
