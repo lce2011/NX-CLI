@@ -7,7 +7,11 @@ use std::process::Command;
 use crate::cli::NewOptions;
 use crate::code_templates::{C_CXX_CODE, MAKEFILE_CODE};
 use crate::error::{CustomError, CustomErrorKind};
-use crate::handlers::{build_path_from_cwd, build_path_from_two, get_os, download_latest_devkit_release_windows, execute_updater_windows};
+use crate::handlers::{build_path_from_cwd, build_path_from_two, get_os};
+
+#[cfg(windows)]
+use crate::handlers::{download_latest_devkit_release_windows, execute_updater_windows};
+
 pub fn new(args: &NewOptions) -> Result<()> {
     let project_path: String = build_path_from_cwd(&args.name.to_string());
 
