@@ -1,4 +1,4 @@
-# NX-Project-Manager
+# NX-CLI
 
 ### Command
 `nx-cli <option> <flags>`
