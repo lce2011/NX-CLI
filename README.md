@@ -2,6 +2,7 @@
 
 ### Command
 `nx-cli <option> <flags>`
+<hr>
 
 ### Subcommands & Options
 **new** `nx-cli new -e <empty> -l <lang> -n <name>`
@@ -13,6 +14,7 @@
 | `-e/--empty` | bool | `true, false` | No        |
 | `-l/--lang`  | &str | `c, cpp, cxx` | No        |
 | `-n/--name`  | &str | `<name>`      | Yes       |
+<br>
 
 **update** `nx-cli update`
 
