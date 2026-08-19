@@ -87,15 +87,15 @@ pub fn update() -> core::result::Result<(), Box<dyn std::error::Error>> {
         "unix" => {
             #[cfg(not(windows))]
             {
-                let unix_download_url: &str = "https://github.com/devkitPro/pacman/releases/download/v6.0.2/devkitpro-pacman-installer.pkg";
-                let debian_download_url: &str = "https://apt.devkitpro.org/install-devkitpro-pacman";
+                let macos_download_url: &str = "https://github.com/devkitPro/pacman/releases/download/v6.0.2/devkitpro-pacman-installer.pkg";
+                let unix_download_url: &str = "https://apt.devkitpro.org/install-devkitpro-pacman";
 
-                if os == "debian" {
-                    println!("Using Updater/Installer from {}.", debian_download_url);
+                if os == "macos" {
+                    println!("Using Updater/Installer from {}.", macos_download_url);
                     let _ = Command::new("wget")
-                        .arg(debian_download_url)
+                        .arg(macos_download_url)
                         .spawn()
-                        .expect(Err(CustomError::new(CustomErrorKind::WgetDownloadFail, &format!("Something went wrong while downloading {}!", debian_download_url).to_string()))?);
+                        .expect(Err(CustomError::new(CustomErrorKind::WgetDownloadFail, &format!("Something went wrong while downloading {}!", macos_download_url).to_string()))?);
                 } else {
                     println!("Using Updater/Installer from {}.", unix_download_url);
                     let _ = Command::new("wget")
