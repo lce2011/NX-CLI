@@ -74,11 +74,14 @@ pub fn update() -> core::result::Result<(), Box<dyn std::error::Error>> {
                 let _ = remove_file(exe_ini_path);
                 println!("Cleaned devkitPro Updater.");
                 println!("devkitPro successfully updated.");
-
-                Ok(())
             }
+            Ok(())
         },
         "unix" => {
+            #[cfg(not(windows))]
+            {
+                todo!()
+            }
             Ok(())
         },
         &_ => {
