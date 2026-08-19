@@ -24,19 +24,23 @@ pub fn get_os() -> String {
     OS.to_string()
 }
 
-pub fn download_latest_devkit_release() -> core::result::Result<(), Box<dyn Error>> {
-    let download_url: &str = "https://github.com/devkitPro/installer/releases/download/v3.0.3/devkitProUpdater-3.0.3.exe";
+#[cfg(windows)]
+pub fn download_latest_devkit_release_windows() -> core::result::Result<(), Box<dyn Error>> {
+    let updater_url: &str = "https://github.com/devkitPro/installer/releases/download/v3.0.3/devkitProUpdater-3.0.3.exe";
 
-    println!("Downloading Updater from {:?}...", download_url);
+    println!("Using devvkitPro Updater from {:?}", updater_url);
 
     let _ = Command::new("wget")
-        .args(["-qO", "devkitPro-Update.exe", download_url])
+        .args(["-qO", "devkitPro-Update.exe", updater_url])
         .status()
-        .expect(Err(CustomError::new(CustomErrorKind::FailedDownload, &format!("Failed to download Updater from {}", download_url).to_string()))?);
+        .expect(Err(CustomError::new(CustomErrorKind::FailedDownload, &format!("Failed to download Updater from {}", updater_url).to_string()))?);
+
+    println!("Downloaded Updater from {:?}", updater_url);
 
     Ok(())
 }
 
+#[cfg(windows)]
 pub fn execute_updater_windows(execution_path: &String) -> Result<()> {
     let path: &str = execution_path.as_str();
     let path_wide: Vec<u16> = path.encode_utf16().chain(Some(0)).collect();

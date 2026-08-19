@@ -4,7 +4,8 @@ use std::error::Error;
 #[derive(Debug)]
 pub enum CustomErrorKind {
     FailedDownload,
-    UnsupportedOS
+    UnsupportedOS,
+    WgetUnavaible
 }
 
 #[derive(Debug)]
