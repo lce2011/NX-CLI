@@ -84,7 +84,7 @@ pub fn update() -> core::result::Result<(), Box<dyn std::error::Error>> {
         "unix" | "android" => {
             #[cfg(not(windows))]
             {
-                todo!()
+                println!("UNIX Test");
             }
             Ok(())
         },
