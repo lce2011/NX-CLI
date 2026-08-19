@@ -99,7 +99,7 @@ pub fn update() -> core::result::Result<(), Box<dyn std::error::Error>> {
                 } else {
                     println!("Using Updater/Installer from {}.", unix_download_url);
                     let _ = Command::new("wget")
-                        .args(["-qO", "devkitPro-Pacman.pkg", unix_download_url])
+                        .args(["-qO", "devkitPro-Pacman.sh", unix_download_url])
                         .spawn()
                         .expect(Err(CustomError::new(CustomErrorKind::WgetDownloadFail, &format!("Something went wrong while downloading {}!", unix_download_url).to_string()))?);
                 }
